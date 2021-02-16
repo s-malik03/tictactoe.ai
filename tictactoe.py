@@ -5,11 +5,15 @@ import copy
 import sys
 class Node():
 
-    def __init__(self,state,last_move=''):
+    def __init__(self,state,moves=[],last_move=''):
 
         self.state=state
-        self.moves=[]
+        self.moves=moves
         self.last_move=last_move
+
+    def add_move(self,move):
+
+        self.moves.append(move)
 
 class Stack():
 
@@ -126,7 +130,7 @@ def AI(Game):
 
     player_val='O'
     NodeStack=Stack()
-    NodeStack.push(Node(Game,'X'))
+    NodeStack.push(Node(state=Game,last_move='X'))
     win_states=[]
     draw_states=[]
     loss_states=[]
@@ -167,9 +171,9 @@ def AI(Game):
 
             for m in moves:
 
-                new_node=Node(copy.deepcopy(n.state),player_val)
+                new_node=Node(copy.deepcopy(n.state),copy.deepcopy(n.moves),player_val)
                 new_node.state.Set(player_val,m)
-                new_node.moves.append(m)
+                new_node.add_move(m)
                 NodeStack.push(copy.deepcopy(new_node))
 
     best_move=0
@@ -198,11 +202,21 @@ def AI(Game):
 
         return win_states[best_move].moves[0]
 
-    else:
+    elif len(draw_states)>0:
 
         for i in range(0,len(draw_states)):
 
-            current_cost=len(draw_states[i].moves)
+            loss_risk=0
+
+            if len(win_states)<100:
+
+                for l in loss_states:
+
+                    if l.moves[0]==draw_states[i].moves[0]:
+
+                        loss_risk=loss_risk+1
+
+            current_cost=len(draw_states[i].moves)+loss_risk
 
             if current_cost<cost:
 
@@ -210,6 +224,19 @@ def AI(Game):
                 best_move=i
 
         return draw_states[best_move].moves[0]
+
+    else:
+
+        game_depth=0
+
+        for i in range(0,len(loss_states)):
+
+            if len(loss_states[i].moves) > game_depth:
+
+                game_depth=len(loss_states[i].moves)
+                best_move=i
+
+        return loss_states[best_move].moves[0]
 
 
 def two_player():
@@ -292,7 +319,7 @@ def cpu():
 
             sys.exit()
 
-        except:
+        except KeyError:
 
             pass
 
