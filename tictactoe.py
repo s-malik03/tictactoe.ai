@@ -178,6 +178,17 @@ def AI(Game):
 
     best_move=0
     cost=999999999999
+    worst_case=9999999999
+    worst_scenario=-1
+
+    if len(loss_states)>0:
+
+        for i in range(0,len(loss_states)):
+
+            if len(loss_states[i].moves)<worst_case:
+
+                worst_scenario=i
+                worst_case=len(loss_states[i].moves)
 
     if len(win_states)>0:
 
@@ -194,6 +205,12 @@ def AI(Game):
                         loss_risk=loss_risk+1
 
             current_cost=len(win_states[i].moves)+loss_risk
+
+            if worst_scenario!=-1:
+
+                if loss_states[worst_scenario].moves[0]!=win_states[i].moves[0]:
+
+                    current_cost=999999999
 
             if current_cost<cost:
 
