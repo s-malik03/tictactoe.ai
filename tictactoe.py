@@ -35,6 +35,28 @@ class Stack():
         self.stack=self.stack[:-1]
         return item
 
+class Queue():
+
+    def __init__(self):
+
+        self.queue=[]
+
+    def push(self,item):
+
+        self.queue.append(item)
+
+    def pop(self):
+
+        if len(self.queue)==0:
+
+            return "Empty"
+
+        item=self.queue[0]
+
+        self.queue=self.queue[1:]
+
+        return item
+
 class GameBoard():
 
     def __init__(self):
