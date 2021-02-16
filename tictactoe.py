@@ -203,6 +203,22 @@ def AI(Game):
     worst_case=9999999999
     worst_scenario=-1
 
+    if len(win_states)>0:
+
+        for w in win_states:
+
+            if len(w.moves)==1:
+
+                return w.moves[0]
+
+    if len(loss_states)>0:
+
+        for l in loss_states:
+
+            if len(l.moves)==2:
+
+                return l.moves[1]
+
     if len(loss_states)>0:
 
         for i in range(0,len(loss_states)):
