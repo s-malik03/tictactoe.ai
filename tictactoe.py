@@ -61,11 +61,11 @@ class GameBoard():
 
     def __init__(self):
 
-        self.Board=[[' ']*3 for i in range(3)]
+        self.Board=[['_']*3 for i in range(3)]
 
     def Set(self,Value,Coords):
 
-        if self.Board[Coords[0]][Coords[1]]!=' ':
+        if self.Board[Coords[0]][Coords[1]]!='_':
 
             return False
 
@@ -82,7 +82,7 @@ class GameBoard():
 
             for c in range(0,3):
 
-                if self.Board[i][c]==' ':
+                if self.Board[i][c]=='_':
 
                     coords.append((i,c))
 
@@ -104,7 +104,7 @@ class GameBoard():
 
             if (self.Board[i][0]==self.Board[i][1]) and (self.Board[i][1]==self.Board[i][2]):
 
-                if self.Board[i][0]==' ':
+                if self.Board[i][0]=='_':
 
                     return "Continue"
 
@@ -112,7 +112,7 @@ class GameBoard():
 
             elif (self.Board[0][i]==self.Board[1][i]) and (self.Board[1][i]==self.Board[2][i]):
 
-                if self.Board[0][i]==' ':
+                if self.Board[0][i]=='_':
 
                     return "Continue"
 
@@ -120,13 +120,13 @@ class GameBoard():
 
         if (self.Board[0][0]==self.Board[1][1]) and (self.Board[1][1]==self.Board[2][2]):
 
-            if self.Board[0][0]!=' ':
+            if self.Board[0][0]!='_':
 
                 return self.Board[0][0]+' Wins'
 
         elif (self.Board[2][0]==self.Board[1][1]) and (self.Board[1][1]==self.Board[0][2]):
 
-            if self.Board[2][0]!=' ':
+            if self.Board[2][0]!='_':
 
                 return self.Board[2][0]+' Wins'
 
