@@ -181,6 +181,10 @@ def AI(Game):
 
         moves=n.state.GetFreePlaces()
 
+        if (1,1) in moves:
+
+            return (1,1)
+
         if n.last_move=='X':
 
             player_val='O'
