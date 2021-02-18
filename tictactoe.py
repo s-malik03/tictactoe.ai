@@ -353,6 +353,8 @@ def cpu():
 
             IsSet=Game.Set(player_val,KeyCoordinateMap[KeyPressed])
             if IsSet:
+                f.write(KeyPressed)
+                f.write(str(KeyCoordinateMap[KeyPressed]))
                 os.system('cls')
                 Game.PrintState()
                 print('You are '+player_val)
@@ -371,6 +373,7 @@ def cpu():
             if State!='Continue':
 
                 print(State)
+                f.write('['+State+']')
                 os.system('pause')
                 return 0
 
@@ -385,6 +388,8 @@ def cpu():
 
 if __name__=='__main__':
 
+    f=open('moves.txt','a')
+
     mode=input('(1)Two Player\n(2)Vs CPU\n>')
 
     if mode=='1':
@@ -394,3 +399,7 @@ if __name__=='__main__':
     if mode=='2':
 
         cpu()
+
+    f.write('\n')
+
+    f.close()
