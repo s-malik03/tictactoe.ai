@@ -3,59 +3,6 @@ import time
 import os
 import copy
 import sys
-class Node():
-
-    def __init__(self,state,moves=[],last_move=''):
-
-        self.state=state
-        self.moves=moves
-        self.last_move=last_move
-
-    def add_move(self,move):
-
-        self.moves.append(move)
-
-class Stack():
-
-    def __init__(self):
-
-        self.stack=[]
-
-    def push(self,item):
-
-        self.stack.append(item)
-
-    def pop(self):
-
-        if len(self.stack)==0:
-
-            return "Empty"
-
-        item=self.stack[-1]
-        self.stack=self.stack[:-1]
-        return item
-
-class Queue():
-
-    def __init__(self):
-
-        self.queue=[]
-
-    def push(self,item):
-
-        self.queue.append(item)
-
-    def pop(self):
-
-        if len(self.queue)==0:
-
-            return "Empty"
-
-        item=self.queue[0]
-
-        self.queue=self.queue[1:]
-
-        return item
 
 class GameBoard():
 
@@ -101,6 +48,10 @@ class GameBoard():
     def GetState(self):
 
         for i in range(0,3):
+
+            if self.Board[0][2]==self.Board[1][2]==self.Board[2][2]=='X':
+
+                return 'X Wins'
 
             if (self.Board[i][0]==self.Board[i][1]) and (self.Board[i][1]==self.Board[i][2]):
 
@@ -148,155 +99,82 @@ KeyCoordinateMap={
     'c':(2,2)
 }
 
-def AI(Game):
+player_bool={'X':True,'O':False}
 
-    player_val='O'
-    NodeStack=Stack()
-    NodeStack.push(Node(state=Game,last_move='X'))
-    win_states=[]
-    draw_states=[]
-    loss_states=[]
+def minimax(Game,player):
 
-    while True:
+    state=Game.GetState()
 
-        n=NodeStack.pop()
+    if state[0]=='X':
 
-        if n=="Empty":
+        return 10
 
-            break
+    if state[0]=='O':
 
-        state=n.state.GetState()
+        return -10
 
-        if state=='O'+" Wins":
+    if state=='Draw':
 
-            win_states.append(n)
+        return 0
 
-        if state=='X'+' Wins':
+    moves=Game.GetFreePlaces()
 
-            loss_states.append(n)
+    scores=[]
 
-        if state=="Draw":
+    for m in moves:
 
-            draw_states.append(n)
-
-        moves=n.state.GetFreePlaces()
-
-        if (1,1) in moves:
-
-            return (1,1)
-
-        if n.last_move=='X':
-
-            player_val='O'
-
+        New=copy.deepcopy(Game)
+        if player=='X':
+            New.Set('X',m)
+            scores.append(minimax(copy.deepcopy(New),'O'))
         else:
+            New.Set('O',m)
+            scores.append(minimax(copy.deepcopy(New),'X'))
 
-            player_val='X'
+    if player=='X':
 
-        if len(moves)!=0:
-
-            for m in moves:
-
-                new_node=Node(copy.deepcopy(n.state),copy.deepcopy(n.moves),player_val)
-                new_node.state.Set(player_val,m)
-                new_node.add_move(m)
-                NodeStack.push(copy.deepcopy(new_node))
-
-    best_move=0
-    cost=999999999999
-    worst_case=9999999999
-    worst_scenario=-1
-
-    if len(win_states)>0:
-
-        for w in win_states:
-
-            if len(w.moves)==1:
-
-                return w.moves[0]
-
-    if len(loss_states)>0:
-
-        for l in loss_states:
-
-            if len(l.moves)==2:
-
-                return l.moves[1]
-
-    if len(loss_states)>0:
-
-        for i in range(0,len(loss_states)):
-
-            if len(loss_states[i].moves)<worst_case:
-
-                worst_scenario=i
-                worst_case=len(loss_states[i].moves)
-
-    if len(win_states)>0:
-
-        for i in range(0,len(win_states)):
-
-            loss_risk=0
-
-            if len(win_states)<100:
-
-                for l in loss_states:
-
-                    if l.moves[0]==win_states[i].moves[0]:
-
-                        loss_risk=loss_risk+1
-
-            current_cost=len(win_states[i].moves)+loss_risk
-
-            if worst_scenario!=-1:
-
-                if loss_states[worst_scenario].moves[0]!=win_states[i].moves[0]:
-
-                    current_cost=999999999
-
-            if current_cost<cost:
-
-                cost=current_cost
-                best_move=i
-
-        return win_states[best_move].moves[0]
-
-    elif len(draw_states)>0:
-
-        for i in range(0,len(draw_states)):
-
-            loss_risk=0
-
-            if len(win_states)<100:
-
-                for l in loss_states:
-
-                    if l.moves[0]==draw_states[i].moves[0]:
-
-                        loss_risk=loss_risk+1
-
-            current_cost=len(draw_states[i].moves)+loss_risk
-
-            if current_cost<cost:
-
-                cost=current_cost
-                best_move=i
-
-        return draw_states[best_move].moves[0]
+        return max(scores)
 
     else:
 
-        game_depth=0
+        return min(scores)
 
-        for i in range(0,len(loss_states)):
 
-            if len(loss_states[i].moves) > game_depth:
+def AI(Game,cpu_player):
 
-                game_depth=len(loss_states[i].moves)
-                best_move=i
+    if cpu_player=='O':
 
-        return loss_states[best_move].moves[0]
+        best_score=999999999999999999
 
+    else:
+
+        best_score=-9999999999999999
+
+    moves=Game.GetFreePlaces()
+
+    for m in moves:
+
+        New=copy.deepcopy(Game)
+
+        New.Set(cpu_player,m)
+
+        score=minimax(copy.deepcopy(New),'X')
+
+        if cpu_player=='O':
+
+            if score<best_score:
+
+                best_score=score
+                best_move=m
+
+        else:
+
+            if score>best_score:
+
+                best_score=score
+                best_move=m
+
+    return best_move
 
 def two_player():
 
@@ -334,7 +212,7 @@ def two_player():
                 os.system('pause')
                 return 0
 
-        except:
+        except KeyError:
 
             pass
 
@@ -360,7 +238,7 @@ def cpu():
                 print('You are '+player_val)
                 State=Game.GetState()
                 if State=='Continue':
-                    CPU_move=AI(Game)
+                    CPU_move=AI(Game,'O')
                     os.system('cls')
                     Game.Set('O',CPU_move)
                     Game.PrintState()
