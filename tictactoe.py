@@ -270,6 +270,8 @@ if __name__=='__main__':
 
     mode=input('(1)Two Player\n(2)Vs CPU\n>')
 
+    os.system('cls')
+
     if mode=='1':
 
         two_player()
