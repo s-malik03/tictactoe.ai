@@ -4,6 +4,8 @@ import os
 import copy
 import sys
 
+recursions=0
+
 class GameBoard():
 
     def __init__(self):
@@ -52,6 +54,18 @@ class GameBoard():
             if self.Board[0][2]==self.Board[1][2]==self.Board[2][2]=='X':
 
                 return 'X Wins'
+
+            if self.Board[2][0]==self.Board[2][1]==self.Board[2][2]=='X':
+
+                return 'X Wins'
+
+            if self.Board[0][2]==self.Board[1][2]==self.Board[2][2]=='O':
+
+                return 'O Wins'
+
+            if self.Board[2][0]==self.Board[2][1]==self.Board[2][2]=='O':
+
+                return 'O Wins'
 
             if (self.Board[i][0]==self.Board[i][1]) and (self.Board[i][1]==self.Board[i][2]):
 
@@ -103,6 +117,10 @@ player_bool={'X':True,'O':False}
 
 def minimax(Game,player):
 
+    global recursions
+
+    recursions=recursions+1
+
     state=Game.GetState()
 
     if state[0]=='X':
@@ -141,6 +159,10 @@ def minimax(Game,player):
 
 
 def AI(Game,cpu_player):
+
+    global recursions
+
+    recursions=0
 
     if cpu_player=='O':
 
@@ -231,8 +253,6 @@ def cpu():
 
             IsSet=Game.Set(player_val,KeyCoordinateMap[KeyPressed])
             if IsSet:
-                f.write(KeyPressed)
-                f.write(str(KeyCoordinateMap[KeyPressed]))
                 os.system('cls')
                 Game.PrintState()
                 print('You are '+player_val)
@@ -240,6 +260,7 @@ def cpu():
                 if State=='Continue':
                     CPU_move=AI(Game,'O')
                     os.system('cls')
+                    f.write(str(recursions)+'\n')
                     Game.Set('O',CPU_move)
                     Game.PrintState()
                     print('You are '+player_val)
@@ -251,8 +272,6 @@ def cpu():
             if State!='Continue':
 
                 print(State)
-                f.write('['+State+']')
-                os.system('pause')
                 return 0
 
         except KeyboardInterrupt:
@@ -266,7 +285,7 @@ def cpu():
 
 if __name__=='__main__':
 
-    f=open('moves.txt','a')
+    f=open('recursions.txt','a')
 
     mode=input('(1)Two Player\n(2)Vs CPU\n>')
 
